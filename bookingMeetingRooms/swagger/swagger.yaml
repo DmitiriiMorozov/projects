@@ -1,0 +1,146 @@
+
+openapi: 3.0.0
+info:
+  title: Booking API
+  description: API для бронирования переговорных комнат
+  version: 1.0.0
+
+paths:
+  /rooms:
+    get:
+      summary: Получить список переговорок
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              example:
+                - room_id: 1
+                  name: Синяя переговорка
+                  location: Этаж 3
+                  capacity: 6
+                - room_id: 2
+                  name: Красная переговорка
+                  location: Этаж 4
+                  capacity: 8
+
+  /rooms/{room_id}:
+    get:
+      summary: Получить информацию о комнате
+      parameters:
+        - name: room_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Комната найдена
+          content:
+            application/json:
+              example:
+                room_id: 2
+                name: Красная переговорка
+                location: Этаж 4
+                capacity: 8
+
+  /bookings:
+    post:
+      summary: Создать бронирование
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                room_id:
+                  type: integer
+                date:
+                  type: string
+                  format: date
+                start_time:
+                  type: string
+                end_time:
+                  type: string
+      responses:
+        '200':
+          description: Бронирование подтверждено
+          content:
+            application/json:
+              example:
+                booking_id: 321
+                status: confirmed
+        '400':
+          description: Комната уже занята
+          content:
+            application/json:
+              example:
+                error: Комната уже занята на это время
+
+  /bookings:
+    get:
+      summary: Получить список бронирований пользователя
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              example:
+                - booking_id: 92
+                  room_name: Зелёная переговорка
+                  date: "2025-04-15"
+                  start_time: "10:00"
+                  end_time: "11:00"
+
+  /bookings/{booking_id}:
+    delete:
+      summary: Отменить бронирование
+      parameters:
+        - name: booking_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Бронирование удалено
+          content:
+            application/json:
+              example:
+                message: Бронирование успешно отменено
+
+  /reviews:
+    post:
+      summary: Оставить отзыв
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                room_id:
+                  type: integer
+                rating:
+                  type: integer
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Отзыв опубликован
+          content:
+            application/json:
+              example:
+                review_id: 88
+                status: published
