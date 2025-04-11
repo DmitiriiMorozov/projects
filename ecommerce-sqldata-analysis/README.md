@@ -232,7 +232,7 @@ FROM order_items oi
 LEFT JOIN returns r ON oi.order_item_id = r.order_item_id
 WHERE r.return_id IS NOT NULL;
 ```
-## [[Анализ данных электронной коммерции]]
+## [Анализ данных](https://github.com/DmitiriiMorozov/projects/blob/main/ecommerce-sqldata-analysis/data/%D0%90%D0%BD%D0%B0%D0%BB%D0%B8%D0%B7%20%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D0%BD%D0%BD%D0%BE%D0%B9%20%D0%BA%D0%BE%D0%BC%D0%BC%D0%B5%D1%80%D1%86%D0%B8%D0%B8.md)
 ___
 ## Визуализация данных
 ___
