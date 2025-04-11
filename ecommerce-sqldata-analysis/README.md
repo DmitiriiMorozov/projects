@@ -118,7 +118,7 @@ ___
 - **payments.order_id → orders.order_id**  
     Платежи относятся к конкретному заказу. Один заказ — один или несколько платежей (в зависимости от бизнес-логики).
 ___
-![[postgres - public.png]]
+![postgres - public.png](https://github.com/DmitiriiMorozov/projects/blob/main/ecommerce-sqldata-analysis/other/images/postgres%20-%20public.png)
 ## Тестовые данные, сгенерированные с помощью ChatGPT.
 ___
 Всего сгенерировано:
@@ -236,10 +236,11 @@ WHERE r.return_id IS NOT NULL;
 ___
 ## Визуализация данных
 ___
-![[Pasted image 20250409172844.png]]![[Pasted image 20250409172929.png]]
-![[Pasted image 20250409172940.png]]
-![[Pasted image 20250409172947.png]]
-![[Pasted image 20250409172957.png]]
+![profit](https://github.com/DmitiriiMorozov/projects/blob/main/ecommerce-sqldata-analysis/other/images/Profit.png)
+![refund](https://github.com/DmitiriiMorozov/projects/blob/main/ecommerce-sqldata-analysis/other/images/Refund.png)
+![newCustomers](https://github.com/DmitiriiMorozov/projects/blob/main/ecommerce-sqldata-analysis/other/images/NewCustomers.png)
+![month](https://github.com/DmitiriiMorozov/projects/blob/main/ecommerce-sqldata-analysis/other/images/Month.png)
+![badOrders](https://github.com/DmitiriiMorozov/projects/blob/main/ecommerce-sqldata-analysis/other/images/BadOrders.png)
 
 ## Выводы из анализа данных
 
