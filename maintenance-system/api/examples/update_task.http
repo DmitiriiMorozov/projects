@@ -1,0 +1,8 @@
+PATCH http://localhost:8000/tasks/1
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "status": "completed",
+  "completed_date": "2023-12-05"
+}

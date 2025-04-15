@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "User",
+  "type": "object",
+  "required": ["name", "email", "password_hash"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "role": {
+      "type": "string",
+      "enum": ["admin", "manager", "viewer"]
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "password_hash": {
+      "type": "string",
+      "pattern": "^\\$2[aby]\\$\\d{2}\\$[./A-Za-z0-9]{53}$",
+      "description": "BCrypt hash"
+    }
+  },
+  "additionalProperties": false
+}

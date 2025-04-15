@@ -1,0 +1,7 @@
+PATCH http://localhost:8000/equipment/1
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "location": "Цех №2"
+}

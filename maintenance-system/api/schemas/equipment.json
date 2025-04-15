@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Equipment",
+  "type": "object",
+  "required": ["name", "inventory_number"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 255,
+      "example": "Насос X200"
+    },
+    "inventory_number": {
+      "type": "string",
+      "pattern": "^INV-[A-Z0-9]{4}$",
+      "example": "INV-045X"
+    },
+    "location": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "installed_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "decommissioned", "storage"]
+    }
+  },
+  "additionalProperties": false
+}

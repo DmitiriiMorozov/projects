@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MaintenanceTask",
+  "type": "object",
+  "required": ["equipment_id", "planned_date"],
+  "properties": {
+    "equipment_id": {
+      "type": "integer",
+      "minimum": 1,
+      "example": 15
+    },
+    "contractor_id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "user_id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "type_id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["planned", "in_progress", "completed", "overdue", "canceled", "awaiting_review"]
+    },
+    "planned_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000
+    }
+  },
+  "additionalProperties": false
+}

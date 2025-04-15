@@ -1,0 +1,293 @@
+openapi: 3.0.0
+info:
+  title: Maintenance API
+  version: 1.1.0
+  description: API для управления техническим обслуживанием оборудования
+servers:
+  - url: https://api.maintenance.local/v1
+
+paths:
+  /equipment:
+    get:
+      summary: Получить список оборудования
+      tags: [Оборудование]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, decommissioned, storage]
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Equipment'
+    post:
+      summary: Добавить оборудование
+      tags: [Оборудование]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Equipment'
+            example:
+              name: "Насос X200"
+              inventory_number: "INV-045"
+              status: "active"
+      responses:
+        '201':
+          description: Оборудование добавлено
+
+  /equipment/{id}:
+    patch:
+      summary: Обновить оборудование
+      tags: [Оборудование]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Equipment'
+      responses:
+        '200':
+          description: Оборудование обновлено
+
+  /tasks:
+    get:
+      summary: Получить список задач ТО
+      tags: [Задачи]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [planned, in_progress, completed, overdue, canceled, awaiting_review]
+        - name: contractor_id
+          in: query
+          schema:
+            type: integer
+        - name: month
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+      responses:
+        '200':
+          description: Список задач
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MaintenanceTask'
+    post:
+      summary: Создать задачу ТО
+      tags: [Задачи]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaintenanceTask'
+            example:
+              equipment_id: 15
+              planned_date: "2023-12-01"
+              type_id: 2
+      responses:
+        '201':
+          description: Задача создана
+
+  /tasks/{id}:
+    patch:
+      summary: Обновить задачу ТО
+      tags: [Задачи]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaintenanceTask'
+      responses:
+        '200':
+          description: Обновлено
+    delete:
+      summary: Удалить задачу
+      tags: [Задачи]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Успешно удалено
+
+  /tasks/{id}/files:
+    post:
+      summary: Загрузить файл
+      tags: [Файлы]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Файл загружен
+    get:
+      summary: Получить список файлов по задаче
+      tags: [Файлы]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список файлов
+
+  /alerts:
+    get:
+      summary: Просроченные задачи
+      tags: [Аналитика]
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Список просроченных задач
+
+  /reports:
+    get:
+      summary: Выгрузка отчётов
+      tags: [Аналитика]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: month
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [csv, xml]
+      responses:
+        '200':
+          description: Отчёт готов
+
+components:
+  schemas:
+    Equipment:
+      type: object
+      required:
+        - name
+        - inventory_number
+      properties:
+        name:
+          type: string
+          example: Насос X200
+        inventory_number:
+          type: string
+          pattern: ^INV-[A-Z0-9]{4}$
+          example: INV-045X
+        location:
+          type: string
+          example: Цех №3
+        installed_at:
+          type: string
+          format: date
+          example: "2023-01-15"
+        status:
+          type: string
+          enum: [active, decommissioned, storage]
+
+    MaintenanceTask:
+      type: object
+      required:
+        - equipment_id
+        - planned_date
+        - type_id
+      properties:
+        equipment_id:
+          type: integer
+          example: 15
+        contractor_id:
+          type: integer
+          example: 7
+        user_id:
+          type: integer
+          example: 1
+        type_id:
+          type: integer
+          example: 2
+        status:
+          type: string
+          enum: [planned, in_progress, completed, overdue, canceled, awaiting_review]
+        planned_date:
+          type: string
+          format: date
+          example: "2023-12-01"
+        completed_date:
+          type: string
+          format: date
+          example: "2023-12-05"
+        description:
+          type: string
+          example: Замена фильтров
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

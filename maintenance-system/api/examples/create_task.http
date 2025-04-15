@@ -1,0 +1,10 @@
+POST http://localhost:8000/tasks
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "equipment_id": 1,
+  "planned_date": "2023-12-15",
+  "contractor_id": 1,
+  "type_id": 1
+}

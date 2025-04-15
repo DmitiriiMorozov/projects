@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Act",
+  "type": "object",
+  "required": ["act_number", "file_url"],
+  "properties": {
+    "act_number": {
+      "type": "string",
+      "pattern": "^ACT-[0-9]{4}-[0-9]{2}$",
+      "example": "ACT-2023-11"
+    },
+    "file_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https?://"
+    },
+    "signed_at": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "additionalProperties": false
+}

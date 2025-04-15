@@ -1,0 +1,2 @@
+GET http://localhost:8000/alerts
+Authorization: Bearer YOUR_TOKEN

@@ -1,0 +1,9 @@
+POST http://localhost:8000/equipment
+Content-Type: application/json
+Authorization: Bearer YOUR_TOKEN
+
+{
+  "name": "Конвейер Z500",
+  "inventory_number": "INV-003",
+  "status": "active"
+}

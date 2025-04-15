@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MaintenanceTasks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Task>
+    <ExternalID>123</ExternalID>
+    <Equipment>
+      <InventoryNumber>INV-045X</InventoryNumber>
+      <Name>Насос X200</Name>
+    </Equipment>
+    <Contractor>
+      <ID>7</ID>
+      <Name>ООО ТехСервис</Name>
+    </Contractor>
+    <PlannedDate>2023-12-01</PlannedDate>
+    <Status>completed</Status>
+    <Act>
+      <Number>ACT-2023-11</Number>
+      <SignedAt>2023-12-05</SignedAt>
+    </Act>
+  </Task>
+</MaintenanceTasks>
