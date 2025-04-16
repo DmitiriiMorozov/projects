@@ -51,18 +51,18 @@ ___
 ## **Этап 2. Моделирование**
 ### **2.1 BPMN: "Проведение ТО"**
 ___
-![[ProvedenieTO.drawio 2.png]](https://github.com/DmitiriiMorozov/projects/blob/main/maintenance-system/docs/diagrams/ProvedenieTO.drawio.png)
+![[ProvedenieTO.drawio 2.png]](https://github.com/DmitiriiMorozov/projects/blob/main/maintenance-system/docs/diagrams/png/ProvedenieTO.drawio.png)
 
 ### **2.2 Use Case диаграмма**
 ___
-![[UseCase.drawio 2.png]](https://github.com/DmitiriiMorozov/projects/blob/main/maintenance-system/docs/diagrams/UseCase.drawio.png)
+![[UseCase.drawio 2.png]](https://github.com/DmitiriiMorozov/projects/blob/main/maintenance-system/docs/diagrams/png/UseCase.drawio.png)
 ### **2.3 Sequence диаграмма**
 ___
 
-![[Sequence.drawio.png]](https://github.com/DmitiriiMorozov/projects/blob/main/maintenance-system/docs/diagrams/Sequence.drawio.png)
+![[Sequence.drawio.png]](https://github.com/DmitiriiMorozov/projects/blob/main/maintenance-system/docs/diagrams/png/Sequence.png)
 ### **2.4 Class диаграмма**
 ___
-![[Class.drawio.png]](https://github.com/DmitiriiMorozov/projects/blob/main/maintenance-system/docs/diagrams/Class.drawio.png)
+![[Class.drawio.png]](https://github.com/DmitiriiMorozov/projects/blob/main/maintenance-system/docs/diagrams/png/Class.drawio.png)
 ___
 ## **Этап 3. Проектирование базы данных и SQL**
 ### **3.1 Анализ процессов**
@@ -238,7 +238,7 @@ ___
     _Поля:_ номер акта, ссылка на файл, дата подписания.
 ### **3.8 ER-диаграмма с атрибутами сущностей**
 ___
-![[postgres - TOProject.png]](https://github.com/DmitiriiMorozov/projects/blob/main/maintenance-system/docs/diagrams/erDiagram.png)
+![[postgres - TOProject.png]](https://github.com/DmitiriiMorozov/projects/blob/main/maintenance-system/docs/diagrams/png/erDiagram.png)
 ## **Этап 4. Проектирование API (REST)**
 ___
 **Цель этапа:**
