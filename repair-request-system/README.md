@@ -102,33 +102,33 @@ ___
 ## **Этап 2. Моделирование**
 **Все исходные диаграммы можно найти в docs/diagrams/source, изображения - docs/diagrams/png.**
 ### **2.1. Use Case диаграмма**
-![[useCaseDiagram.png]]
+![[useCaseDiagram.png]](https://github.com/DmitiriiMorozov/projects/blob/main/repair-request-system/docs/diagrams/png/useCaseDiagram.png)
 ___
 ### **2.2.  Class diagram (Диаграмма классов)**
-![[classDiagram.png]]
+![[classDiagram.png]](https://github.com/DmitiriiMorozov/projects/blob/main/repair-request-system/docs/diagrams/png/classDiagram.png)
 ___
 ### **2.3. Sequence diagram (Диаграмма последовательности)**
 #### **2.3.1. Сотрудник меняет статус**
-![[switchStatusSequenceDiagram.png]]
+![[switchStatusSequenceDiagram.png]](https://github.com/DmitiriiMorozov/projects/blob/main/repair-request-system/docs/diagrams/png/switchStatusSequenceDiagram.png)
 ___
 #### **2.3.2. Жилец подает заявку**
-![[makingRequestSequenceDiagram.png]]
+![[makingRequestSequenceDiagram.png]](https://github.com/DmitiriiMorozov/projects/blob/main/repair-request-system/docs/diagrams/png/makingRequestSequenceDiagram.png)
 ___
 ### **2.4. State diagram (Диаграмма состояний)**
-![[stateDiagram.png]]
+![[stateDiagram.png]](https://github.com/DmitiriiMorozov/projects/blob/main/repair-request-system/docs/diagrams/png/stateDiagram.png)
 ___
 ### **2.5. Activity diagram (Диаграмма активности)**
 #### **2.5.1. Создание заявки**
-![[makingRequestActivityDiagram.png]]
+![[makingRequestActivityDiagram.png]](https://github.com/DmitiriiMorozov/projects/blob/main/repair-request-system/docs/diagrams/png/makingRequestActivityDiagram.png)
 ___
 #### **2.5.2. Обработка заявки сотрудником УК**
-![[requestProcessingActivityDiagram.png]]
+![[requestProcessingActivityDiagram.png]](https://github.com/DmitiriiMorozov/projects/blob/main/repair-request-system/docs/diagrams/png/requestProcessingActivityDiagram.png)
 ___
 #### **2.5.3. Экспорт отчетов админом**
-![[exportActivityDiagram.png]]
+![[exportActivityDiagram.png]](https://github.com/DmitiriiMorozov/projects/blob/main/repair-request-system/docs/diagrams/png/exportActivityDiagram.png)
 ___
 ### 2.6. ER-диаграмма
-![[ERDiagram.png]]
+![[ERDiagram.png]](https://github.com/DmitiriiMorozov/projects/blob/main/repair-request-system/docs/diagrams/png/ERDiagram.png)
 ___
 
 ## **Этап 3. Проектирование API**
