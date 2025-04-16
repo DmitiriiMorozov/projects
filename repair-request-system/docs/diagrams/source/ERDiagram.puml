@@ -1,0 +1,91 @@
+@startuml
+' Сущности
+entity "Users" {
+  * id: UUID [PK]
+  --
+  * role: ENUM('Жилец', 'Сотрудник', 'Админ')
+  * name: VARCHAR(100)
+  * phone: VARCHAR(20)
+  * telegram_id: VARCHAR(50) [UNIQUE]
+  * email: VARCHAR(100) [UNIQUE]
+  * created_at: TIMESTAMP
+}
+
+entity "Requests" {
+  * id: UUID [PK]
+  --
+  * user_id: UUID [FK -> Users.id]
+  * category_id: UUID [FK -> Categories.id]
+  * title: VARCHAR(200)
+  * description: TEXT
+  * priority: ENUM('Аварийная', 'Стандартная')
+  * status: ENUM('Новая', 'В работе', 'Выполнена', 'Отклонена', 'Ожидает оценки')
+  * rating: INT [1-5]
+  * comment: TEXT
+  * created_at: TIMESTAMP
+  * closed_at: TIMESTAMP
+}
+
+entity "Categories" {
+  * id: UUID [PK]
+  --
+  * name: VARCHAR(100) [UNIQUE]
+  * description: TEXT
+}
+
+entity "Media" {
+  * id: UUID [PK]
+  --
+  * request_id: UUID [FK -> Requests.id]
+  * type: ENUM('Фото', 'Видео')
+  * url: VARCHAR(255)
+}
+
+entity "Comments" {
+  * id: UUID [PK]
+  --
+  * request_id: UUID [FK -> Requests.id]
+  * user_id: UUID [FK -> Users.id]
+  * text: TEXT
+  * created_at: TIMESTAMP
+}
+
+entity "Notifications" {
+  * id: UUID [PK]
+  --
+  * request_id: UUID [FK -> Requests.id]
+  * user_id: UUID [FK -> Users.id]
+  * message: TEXT
+  * sent_at: TIMESTAMP
+}
+
+entity "AuditLogs" {
+  * id: UUID [PK]
+  --
+  * request_id: UUID [FK -> Requests.id]
+  * user_id: UUID [FK -> Users.id]
+  * action: ENUM('Создание', 'Изменение статуса', 'Назначение', 'Комментарий')
+  * details: TEXT
+  * timestamp: TIMESTAMP
+}
+
+entity "Reports" {
+  * id: UUID [PK]
+  --
+  * admin_id: UUID [FK -> Users.id]
+  * period_start: DATE
+  * period_end: DATE
+  * data: JSON
+  * exported_at: TIMESTAMP
+}
+
+' Связи
+Users ||--o{ Requests : "Подаёт"
+Categories ||--o{ Requests : "Относится к"
+Requests ||--o{ Media : "Прикрепляет"
+Requests ||--o{ Comments : "Содержит"
+Requests ||--o{ Notifications : "Генерирует"
+Requests ||--o{ AuditLogs : "История изменений"
+Users ||--o{ AuditLogs : "Выполняет действие"
+Users ||--o{ Reports : "Экспортирует"
+@enduml

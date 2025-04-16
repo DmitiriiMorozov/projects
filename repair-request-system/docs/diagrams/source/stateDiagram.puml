@@ -1,0 +1,47 @@
+@startuml
+title Жизненный цикл заявки
+
+skinparam backgroundColor #FAFAFA
+skinparam state {
+  BackgroundColor<<highlight>> #E6F7FF
+  BorderColor Black
+  FontColor Black
+  FontSize 14
+  FontName "Arial"
+}
+
+state "Новая" as New <<highlight>>
+state "В работе" as InProgress
+state "Выполнена" as Done
+state "Отклонена" as Rejected
+state "Ожидает оценки" as WaitingRating
+state "Закрыта" as Closed
+
+[*] --> New
+New --> InProgress : Назначен сотрудник
+InProgress --> Done : Работа завершена
+InProgress --> Rejected : Не подлежит устранению
+Done --> WaitingRating : Уведомление жильцу
+WaitingRating --> Closed : Жилец оценил
+Rejected --> Closed
+
+note right of New
+Заявка только что создана
+и ожидает обработки.
+end note
+
+note right of InProgress
+Сотрудник начал выполнение
+заявки.
+end note
+
+note right of WaitingRating
+Ожидается отзыв или оценка
+качества работы.
+end note
+
+note right of Rejected
+Заявка отклонена по причине
+неактуальности или ошибки.
+end note
+@enduml

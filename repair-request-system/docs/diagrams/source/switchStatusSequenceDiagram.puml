@@ -1,0 +1,92 @@
+@startuml
+title Сценарий: Сотрудник меняет статус
+
+actor "Сотрудник УК" as employee
+participant "UI" as ui
+participant "Backend" as backend
+participant "DB" as db
+participant "NotificationService" as ns
+
+employee -> ui : Открыть заявку
+activate ui
+
+ui -> backend : GET /request/{id}
+activate backend
+
+backend -> db : SELECT * FROM requests WHERE id = {id}
+activate db
+note right of db
+Получение полной информации
+о заявке по ID
+end note
+
+db --> backend : Данные заявки
+deactivate db
+
+backend --> ui : 200 OK (данные заявки)
+deactivate backend
+ui --> employee : Показать данные заявки
+deactivate ui
+
+employee -> ui : Изменить статус
+activate ui
+
+ui -> backend : PUT /request/{id}/status {"status": "в работе" }
+note right of ui
+Сотрудник переводит заявку
+в статус "в работе"
+end note
+activate backend
+
+backend -> db : UPDATE requests SET status = 'в работе'
+activate db
+note right of db
+Изменение статуса в БД
+end note
+
+db --> backend : OK
+deactivate db
+
+backend -> ns : SendNotification(тип: "status update", request_id)
+note right of backend
+Отправка уведомления о смене статуса
+end note
+activate ns
+ns --> backend : 200 OK
+deactivate ns
+
+backend --> ui : 200 OK (статус обновлен)
+deactivate backend
+ui --> employee : "Статус заявки изменен"
+deactivate ui
+
+alt Обновление успешно
+  backend -> ns : SendNotification(тип: "status update", request_id)
+  activate ns
+  alt Уведомление отправлено
+    ns --> backend : 200 OK
+  else Ошибка
+    ns --> backend : 500 Failed
+    backend --> ui : "Уведомление не доставлено"
+    ui --> employee : "Статус изменен, но уведомление не отправлено"
+  end
+  deactivate ns
+  backend --> ui : 200 OK (статус обновлен)
+  deactivate backend
+  ui --> employee : "Статус заявки изменен"
+else Заявка уже в работе
+  backend --> ui : 409 Conflict
+  note right of backend
+  Защита от одновременного редактирования.
+  Заявка уже обрабатывается другим.
+  end note
+  deactivate backend
+  ui --> employee : "Заявка уже обрабатывается другим сотрудником"
+else Ошибка сервера
+  backend --> ui : 500 Internal Server Error
+  deactivate backend
+  ui --> employee : "Ошибка изменения статуса"
+end
+deactivate ui
+
+@enduml

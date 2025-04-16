@@ -1,0 +1,84 @@
+@startuml
+title Сценарий: Жилец подаёт заявку
+
+actor "Жилец" as resident
+participant "UI (Telegram-бот)" as ui
+participant "Backend" as backend
+participant "DB" as db
+participant "NotificationService" as ns
+
+resident -> ui : Открыть форму заявки
+ui --> resident : Показать форму с полями (описание, срочность, фото)
+
+resident -> ui : Заполнить данные и нажать "Отправить"
+ui --> resident : "Подтвердите отправку заявки"
+resident -> ui : Подтвердить
+activate ui
+
+note right of ui
+Пользователь заполняет форму и подтверждает отправку заявки
+end note
+
+ui -> backend : POST /requests
+note right of ui
+{
+  "description": "Протекает кран",
+  "priority": "high",
+  "photo": "base64_encoded_image"
+}
+end note
+activate backend
+
+backend -> db : INSERT INTO requests (...)
+activate db
+
+note right of db
+Сохраняем заявку в базе данных
+end note
+
+alt Успешное сохранение
+  db --> backend : id = 123
+  deactivate db
+
+  backend -> ns : SendNotification(type: "new_request", request_id=123)
+  activate ns
+
+  note right of ns
+  Уведомляем ответственных о новой заявке
+  end note
+
+  alt Уведомление отправлено
+    ns --> backend : 200 OK
+    deactivate ns
+
+    backend --> ui : 201 Created { id: 123 }
+    deactivate backend
+
+    ui --> resident : "Заявка №123 создана!"
+  
+  else Ошибка уведомления
+    ns --> backend : 500 Failed
+    deactivate ns
+
+    backend --> ui : 201 Created { id: 123, warning: "Уведомление не отправлено" }
+    deactivate backend
+
+    ui --> resident : "Заявка №123 создана, но возникли проблемы с уведомлением"
+  end
+
+else Ошибка БД
+  db --> backend : 503 Service Unavailable
+  deactivate db
+
+  note right of backend
+  Ошибка при сохранении заявки в БД
+  end note
+
+  backend --> ui : 500 Internal Server Error
+  deactivate backend
+
+  ui --> resident : "Ошибка: не удалось создать заявку"
+end
+
+deactivate ui
+@enduml

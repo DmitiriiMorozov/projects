@@ -1,0 +1,548 @@
+openapi: 3.0.3
+info:
+  title: Система управления заявками на ремонт
+  version: 2.1.0
+  description: |
+    Полная документация API для управления заявками, пользователями, комментариями и отчётами.
+    Поддерживает роли: Жилец, Сотрудник УК, Администратор.
+tags:
+  - name: Заявки
+    description: Управление заявками на ремонт
+  - name: Пользователи
+    description: Управление пользователями системы
+  - name: Комментарии
+    description: Работа с комментариями к заявкам
+  - name: Отчёты
+    description: Формирование аналитических отчётов
+  - name: Категории
+    description: Управление категориями заявок
+
+security:
+  - BearerAuth: []
+
+paths:
+  /requests:
+    post:
+      tags: [Заявки]
+      summary: Создать новую заявку
+      description: |
+        Создание заявки жильцом. Максимальный размер вложений - 5 файлов.
+        Пример тела запроса:
+        ```json
+        {
+          "user_id": "550e8400-e29b-41d4-a716-446655440000",
+          "category_id": "3d3e3f40-4a4b-4c4d-4e4f-505152535455",
+          "title": "Протекает кран",
+          "priority": "Аварийная",
+          "attachments": ["https://cdn.example.com/photo1.jpg"]
+        }
+        ```
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewRequest'
+      responses:
+        '201':
+          description: Заявка создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+
+    get:
+      tags: [Заявки]
+      summary: Поиск заявок
+      description: |
+        Возвращает список заявок с фильтрами и пагинацией.
+        Требуются права сотрудника или администратора.
+      parameters:
+        - $ref: '#/components/parameters/StatusFilter'
+        - $ref: '#/components/parameters/CategoryFilter'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Request'
+
+  /requests/{id}:
+    parameters:
+      - $ref: '#/components/parameters/RequestId'
+    get:
+      tags: [Заявки]
+      summary: Получить детали заявки
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+    delete:
+      tags: [Заявки]
+      summary: Удалить заявку (админ)
+      security:
+        - BearerAuth: [admin]
+      responses:
+        '204':
+          description: Заявка удалена
+
+  /requests/{id}/comments:
+    post:
+      tags: [Заявки]
+      summary: Добавить комментарий
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewComment'
+      responses:
+        '201':
+          description: Комментарий добавлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+    get:
+      tags: [Заявки]
+      summary: Получить комментарии к заявке
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Список комментариев
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+
+  /users:
+    post:
+      tags: [Пользователи]
+      summary: Создать пользователя (админ)
+      security:
+        - BearerAuth: [admin]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '201':
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    get:
+      tags: [Пользователи]
+      summary: Список пользователей
+      parameters:
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      tags: [Пользователи]
+      summary: Обновить данные пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Данные обновлены
+    delete:
+      tags: [Пользователи]
+      summary: Удалить пользователя (админ)
+      responses:
+        '204':
+          description: Пользователь удалён
+
+  /categories:
+    get:
+      tags: [Категории]
+      summary: Список категорий
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+    post:
+      tags: [Категории]
+      summary: Создать категорию (админ)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCategory'
+      responses:
+        '201':
+          description: Категория создана
+
+  /categories/{id}:
+    delete:
+      tags: [Категории]
+      summary: Удалить категорию (админ)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Категория удалена
+
+  /comments/{id}:
+    delete:
+      tags: [Комментарии]
+      summary: Удалить комментарий
+      security:
+        - BearerAuth: [admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Комментарий удалён
+          
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        **Требуемые scope для ролей:**
+        - Жилец: `user`
+        - Сотрудник: `user, employee`
+        - Админ: `user, employee, admin`
+
+  schemas:
+    NewRequest:
+      type: object
+      required: [user_id, category_id, title, priority]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        category_id:
+          type: string
+          format: uuid
+          example: "3d3e3f40-4a4b-4c4d-4e4f-505152535455"
+        title:
+          type: string
+          minLength: 5
+          maxLength: 200
+          example: "Протекает кран на кухне"
+        priority:
+          type: string
+          enum: [Аварийная, Стандартная]
+        attachments:
+          type: array
+          items:
+            type: string
+            format: uri
+          maxItems: 5
+          example: ["https://example.com/photo1.jpg"]
+
+    Request:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [Новая, В работе, Выполнена, Отклонена, Ожидает оценки]
+          description: |
+            - **Новая**: Заявка создана, но не назначена (доступна для редактирования жильцом)
+            - **В работе**: Назначен ответственный сотрудник (требуются права сотрудника УК)
+            - **Выполнена**: Работа завершена (изменение доступно только сотруднику УК)
+            - **Отклонена**: Заявка не может быть выполнена (требуется комментарий сотрудника)
+            - **Ожидает оценки**: Жилец должен оценить выполнение (автоматически после выполнения)          
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T12:00:00Z"
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [Жилец, Сотрудник, Админ]
+          description: |
+            - **Жилец**: Только свои заявки
+            - **Сотрудник**: Все заявки + изменение статусов
+            - **Админ**: Полный доступ          
+        email:
+          type: string
+          format: email
+          
+    NewUser:
+      type: object
+      required: [email, role]
+      properties:
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [Жилец, Сотрудник, Админ]
+
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+
+    NewCategory:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          example: "Электрика"
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Сантехника"
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "validation_error"
+        message:
+          type: string
+          example: "Ошибка валидации"
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: "email"
+              error:
+                type: string
+                example: "Некорректный формат email"
+              rule:
+                type: string
+                example: "format"
+
+    NewComment:
+      type: object
+      required: [text]
+      properties:
+        text:
+          type: string
+          maxLength: 1000
+          example: "Проверьте трубы на 5 этаже"
+
+    Comment:
+      allOf:
+        - $ref: '#/components/schemas/NewComment'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            author_id:
+              type: string
+              format: uuid
+            created_at:
+              type: string
+              format: date-time
+
+    RolePermissions:
+      type: object
+      description: |
+        **Права доступа:**
+        - **Жилец**: 
+          - Создание/просмотр своих заявок
+          - Добавление комментариев к своим заявкам
+          - Оценка выполненных заявок
+        - **Сотрудник УК**:
+          - Все действия Жильца
+          - Изменение статуса заявок
+          - Просмотр всех заявок
+        - **Админ**:
+          - Все действия Сотрудника
+          - Управление пользователями/категориями
+          - Удаление любых данных
+      example:
+        Жилец: ["requests:create", "requests:read_own", "comments:add"]
+        Сотрудник: ["requests:update_status", "requests:read_all"]
+        Админ: ["users:manage", "categories:delete"]
+  parameters:
+    StatusFilter:
+      name: status
+      in: query
+      schema:
+        type: string
+        enum: [Новая, В работе, Выполнена, Отклонена, Ожидает оценки]
+      description: Фильтр по статусу заявки
+
+    CategoryFilter:
+      name: category_id
+      in: query
+      schema:
+        type: string
+        format: uuid
+      description: Фильтр по ID категории
+
+    PageNumber:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Номер страницы
+
+    PageSize:
+      name: page_size
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Размер страницы
+
+    RequestId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: UUID заявки
+
+  responses:
+    ValidationError:
+      description: Ошибка валидации
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            EmailError:
+              value:
+                code: "validation_error"
+                message: "Ошибка в поле email"
+                errors:
+                  - field: "email"
+                    error: "Некорректный формат"
+                    rule: "RFC 5322"
+            RequiredField:
+              value:
+                code: "validation_error"
+                message: "Обязательные поля отсутствуют"
+                errors:
+                  - field: "title"
+                    error: "Поле обязательно для заполнения"
+
+    ForbiddenError:
+      description: Доступ запрещён
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: "forbidden"
+            message: "Недостаточно прав для изменения статуса"
+            errors:
+              - field: "status"
+                error: "Требуются права сотрудника УК"
+
+    UnauthorizedError:
+      description: Неавторизованный доступ
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: "unauthorized"
+            message: "Требуется авторизация"
+
+    ServerError:
+      description: Внутренняя ошибка
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: "internal_error"
+            message: "Ошибка на сервере"
