@@ -1,0 +1,35 @@
+@startuml
+title Сценарий: Создание задачи ТО и уведомление подрядчика
+
+actor "Пользователь" as ui
+participant "Backend" as backend
+participant "Очередь задач" as queue
+participant "Email-сервис" as email
+participant "Подрядчик" as contractor
+
+ui -> backend : POST /tasks { данные задачи }
+activate backend
+
+backend -> queue : Добавить задачу в очередь (JSON)
+activate queue
+deactivate backend
+
+queue -> email : Событие: "Задача создана" (id задачи)
+activate email
+deactivate queue
+
+alt Уведомление успешно
+  email -> contractor : Отправить email с деталями задачи
+  activate contractor
+  contractor --> email : OK
+  deactivate contractor
+  email --> queue : Подтверждение доставки
+  deactivate email
+else Ошибка доставки
+  email --> backend : Ошибка: "Не удалось отправить email"
+  activate backend
+  backend --> ui : "Ошибка: уведомление не доставлено"
+  deactivate backend
+  deactivate email
+end
+@enduml
